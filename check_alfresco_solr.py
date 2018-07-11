@@ -50,7 +50,12 @@ class alfSolrRes(nagiosplugin.Resource):
 		self.metrics = []
 		
 	def probe(self):
-		self.monitorDict.update(self.analyzeData(self.solrCore, [self.statusData, self.summaryData]))
+		try:
+			self.monitorDict.update(self.analyzeData(self.solrCore, [self.statusData, self.summaryData]))
+		except ValueError as valueErr:
+			unk = nagiosplugin.Result(nagiosplugin.Unknown, hint='something went wrong gathering data from Solr')
+			return
+			
 		if self.monitor in 'index' 'fts':
 			monitorData = self.monitorDict[self.solrCore][self.monitor]
 		else:
