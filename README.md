@@ -29,7 +29,7 @@ $ pip install nagiosplugin
 
 Simply copy the file check_alfresco_solr.py to the nagios plugin directory usually something like `/usr/lib/nagios/plugins`.
 
-### Configuration
+## Configuration
 
 Once deployed, add the following to your Nagios configuration.
 
