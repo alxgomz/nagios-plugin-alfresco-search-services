@@ -75,7 +75,9 @@ SOLRMONITORITEM: one of New, Clean, Dirty
 SOLRSCHEME  
 SOLRADMINURL
 
-##Command line usage
+## Usage
+
+### Command line
 
 ```
 usage: check_alfresco_solr.py [-h] [--host HOST] [--port PORT]
@@ -128,3 +130,22 @@ optional arguments:
   -c CRITICAL           Critical threshold for Nagios style monitoring
   --item ITEM           Name of item to monitor (see above for details)
 ```
+
+### SSL enabled Solr
+
+By default Solr4 on Alfresco 5 is configured with SSL enabled and mutual authentitcation. If that's your case you will needs to use a client certificate file and its associated private key.
+The default one, **which you should not be using in real life environements**, are provided [here](ssl/) for convenience and can be used with the command lineorameters bellow:
+
+```
+  --sslkey ssl/key_solr_client --sslcert ssl/cert_solr_client
+```
+
+As Alfresco recommands setting up your own certificate and discourages the use of the default one those ceertificates provided here won't probably work.
+Bellow is an example of how to generate proper key and certificate files from your own p12 (generated from your own pki for instance):
+
+```
+$ openssl -in solr_client.p12 -nocerts -nodes -out ssl/key_solr_client
+$ openssl -in solr_client.p12 -nokeys -out ssl/cert_solr_client
+```
+
+> Here we use unencrypted key file for automation purposes (`-nodes`). Make sure you take appropriate actions to make it as secure as possible (not world readable, appropriate owner only, ...)
