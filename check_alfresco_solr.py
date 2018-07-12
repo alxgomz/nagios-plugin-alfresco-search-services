@@ -95,7 +95,7 @@ class alfSolrRes(nagiosplugin.Resource):
 				
 		elif self.monitor in 'index' 'fts':
 			for key, value in monitorData.items():
-				uom = 'b' if key == 'size' else None
+				uom = 'b' if key == 'indexSize' else 'c'
 				if key == self.item:
 					self.metrics.insert(0, nagiosplugin.Metric(key, float(value), uom=uom, context=self.monitor + ':' + self.item))
 				else:
@@ -147,7 +147,7 @@ class alfSolrRes(nagiosplugin.Resource):
 			statisticsTree = xml.etree.ElementTree.fromstring(data[1])
 			solrDataDict[core]['index']['numDocs'] = statusTree.find(xpathStatusQString + 'int[@name="numDocs"]').text
 			solrDataDict[core]['index']['segmentCount'] = statusTree.find(xpathStatusQString + 'int[@name="segmentCount"]').text
-			solrDataDict[core]['index']['size'] = statusTree.find(xpathStatusQString + 'long[@name="sizeInBytes"]').text
+			solrDataDict[core]['index']['indexSize'] = statusTree.find(xpathStatusQString + 'long[@name="sizeInBytes"]').text
 			
 			for key in 'Alfresco Acls in Index','Alfresco Nodes in Index','Alfresco Transactions in Index',\
 					   'Alfresco Acl Transactions in Index','Alfresco States in Index','Alfresco Unindexed Nodes',\
@@ -184,7 +184,7 @@ def main():
 	            Alfresco Nodes in Index, Alfresco Transactions in Index, 
 	            Alfresco Acl Transactions in Index,
 	            Alfresco States in Index, Alfresco Unindexed Nodes, 
-	            Alfresco Error Nodes in Index, numDocs, segmentCount,size
+	            Alfresco Error Nodes in Index, numDocs, segmentCount,indexSize
 	            
 	- fts:      warning (-w) and critical (-c) command line parameters are
 	            applied to the item specified with --item
