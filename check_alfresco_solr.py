@@ -27,7 +27,7 @@ import nagiosplugin
 import urllib3
 import xml.etree.ElementTree
 from sys import argv
-from argparse import RawTextHelpFormatter
+#from argparse import RawTextHelpFormatter
 
 class alfSolrRes(nagiosplugin.Resource):
 	"""Deal with Solr statistics values gathered from the status and
@@ -53,7 +53,7 @@ class alfSolrRes(nagiosplugin.Resource):
 		try:
 			self.monitorDict.update(self.analyzeData(self.solrCore, [self.statusData, self.summaryData]))
 		except ValueError as valueErr:
-			unk = nagiosplugin.Result(nagiosplugin.Unknown, hint='something went wrong gathering data from Solr')
+			nagiosplugin.Result(nagiosplugin.Unknown, hint='something went wrong gathering data from Solr')
 			return
 			
 		if self.monitor in 'index' 'fts':
@@ -161,9 +161,10 @@ class alfSolrRes(nagiosplugin.Resource):
 					solrDataDict[core]['handlers'][handler][key] = statisticsTree.find(xpathStatisticsQString + '/lst[@name="' + handler + '"]/double[@name="' + key + '"]').text
 
 			for cache in '/alfrescoPathCache','/alfrescoAuthorityCache','/queryResultCache','/filterCache':
-				solrDataDict[core]['caches'][cache]['lookups'] = statisticsTree.find(xpathStatisticsQString + 'lst[@name="' + cache + '"]/long[@name="lookups"]').text
+				solrDataDict[core]['caches'][cache]['hits'] = statisticsTree.find(xpathStatisticsQString + 'lst[@name="' + cache + '"]/long[@name="hits"]').text
+				solrDataDict[core]['caches'][cache]['misses'] = statisticsTree.find(xpathStatisticsQString + 'lst[@name="' + cache + '"]/long[@name="inserts"]').text
+				solrDataDict[core]['caches'][cache]['evictions'] = statisticsTree.find(xpathStatisticsQString + 'lst[@name="' + cache + '"]/long[@name="evictions"]').text
 				solrDataDict[core]['caches'][cache]['hitratio'] = statisticsTree.find(xpathStatisticsQString + 'lst[@name="' + cache + '"]/float[@name="cumulative_hitratio"]').text
-				solrDataDict[core]['caches'][cache]['evictions'] = statisticsTree.find(xpathStatisticsQString + 'lst[@name="' + cache + '"]/long[@name="cumulative_evictions"]').text
 				solrDataDict[core]['caches'][cache]['size'] = statisticsTree.find(xpathStatisticsQString + 'lst[@name="' + cache + '"]/' + ('long' if cache == '/filterCache' else 'int') + '[@name="size"]').text
 				
 			for fts in 'Clean','Dirty','New':
@@ -200,7 +201,7 @@ def main():
 		    apply to the hitratio of the cache.
 		    Available items: /alfrescoPathCache, /alfrescoAuthorityCache, 
 		    /queryResultCache, /filterCache
-	''', formatter_class=RawTextHelpFormatter)
+	''', formatter_class=argparse.RawTextHelpFormatter)
 	parser.add_argument('--host', default='localhost', help='hostname or IP address of the Solr service')
 	parser.add_argument('--port', default='8983', help='port number of the Solr service')
 	parser.add_argument('--scheme', default='http', help='protocol scheme of the Solr service')
