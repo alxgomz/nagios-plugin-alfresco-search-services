@@ -44,6 +44,7 @@ class alfSolrRes(nagiosplugin.Resource):
 		self.solrCore = args.core
 		self.monitor = args.monitor
 		self.item = args.item
+		self.relaxed = args.relaxed
 		self.statusData = self.solrReq('status')
 		self.summaryData = self.solrReq('summary')
 		self.monitorDict = {}
@@ -66,9 +67,9 @@ class alfSolrRes(nagiosplugin.Resource):
 				if key in 'errors' 'timeouts' 'requests':
 					uom = 'c'
 					if key == 'errors':
-						context = 'nonZeroCrit'
+						context = 'nonZeroCrit' if self.relaxed else 'noCtx'
 					elif key == 'timeouts':
-						context = 'nonZeroWarn'
+						context = 'nonZeroWarn' if self.relaxed else 'noCtx'
 					else:
 						context = 'noCtx'
 					self.metrics.append(nagiosplugin.Metric(key, float(value), uom=uom, context=context))
@@ -215,6 +216,7 @@ def main():
 	parser.add_argument('-w', dest='warning', help='Warning threshold for Nagios style monitoring')
 	parser.add_argument('-c', dest='critical', help='Critical threshold for Nagios style monitoring')
 	parser.add_argument('--item', help='Name of item to monitor (see above for details)', required = '--monitor' in argv)
+	parser.add_argument('--relaxed', action='store_true', help='do not trigger alerts on error in handlers neither warning on handelrs\' timeouts')
 	args = parser.parse_args()
 	if args.monitor:
 		check = nagiosplugin.Check(alfSolrRes(args), \

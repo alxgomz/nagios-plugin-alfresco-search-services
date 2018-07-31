@@ -129,6 +129,7 @@ optional arguments:
   -w WARNING            Warning threshold for Nagios style monitoring
   -c CRITICAL           Critical threshold for Nagios style monitoring
   --item ITEM           Name of item to monitor (see above for details)
+  --relaxed             do not trigger alerts on error in handlers neither warning on handelrs' timeouts
 ```
 
 ### SSL enabled Solr
