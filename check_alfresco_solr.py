@@ -27,7 +27,6 @@ import nagiosplugin
 import urllib3
 import xml.etree.ElementTree
 from sys import argv
-#from argparse import RawTextHelpFormatter
 
 class alfSolrRes(nagiosplugin.Resource):
 	"""Deal with Solr statistics values gathered from the status and
@@ -67,9 +66,9 @@ class alfSolrRes(nagiosplugin.Resource):
 				if key in 'errors' 'timeouts' 'requests':
 					uom = 'c'
 					if key == 'errors':
-						context = 'nonZeroCrit' if self.relaxed else 'noCtx'
+						context = 'nonZeroCrit' if not self.relaxed else 'noCtx'
 					elif key == 'timeouts':
-						context = 'nonZeroWarn' if self.relaxed else 'noCtx'
+						context = 'nonZeroWarn' if not self.relaxed else 'noCtx'
 					else:
 						context = 'noCtx'
 					self.metrics.append(nagiosplugin.Metric(key, float(value), uom=uom, context=context))
